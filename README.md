@@ -1,6 +1,6 @@
 # External Merge Sort Implementation
 
-![Sorting Visualization](https://via.placeholder.com/800x400?text=Sorting+Visualization) <!-- Replace with actual visualization -->
+![Sorting Visualization]<!-- Replace with actual visualization -->
 
 An efficient external merge sort implementation for large datasets that exceed available memory, featuring web-based monitoring and MongoDB integration.
 
