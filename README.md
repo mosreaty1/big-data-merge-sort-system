@@ -40,6 +40,6 @@ An efficient external merge sort implementation for large datasets that exceed a
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/external-merge-sort.git
+git clone https://github.com/mosreaty1/external-merge-sort.git
 cd external-merge-sort
 pip install -r requirements.txt
