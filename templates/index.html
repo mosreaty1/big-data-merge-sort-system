@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced External Merge Sort - Professional Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #f59e0b;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
+            --border-color: #4b5563;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title i {
+            color: var(--primary-color);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-color), #d97706);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--error-color), #dc2626);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .select, .input {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .select:focus, .input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .metric-change {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            opacity: 0.8;
+        }
+
+        /* Data Table */
+        .table-container {
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-primary);
+        }
+
+        .table th {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .table tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .table th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        .table th.sortable:hover {
+            background: var(--border-color);
+        }
+
+        .table th.sortable::after {
+            content: '\f0dc';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 0.5rem;
+            opacity: 0.5;
+            font-size: 0.75rem;
+        }
+
+        /* Search and Filters */
+        .search-container {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            align-items: end;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            position: relative;
+        }
+
+        .search-input input {
+            width: 100%;
+            padding-left: 2.5rem;
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .pagination button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Charts */
+        .chart-container {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--success-color);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+
+        .toast.error {
+            border-left-color: var(--error-color);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .toast.info {
+            border-left-color: var(--info-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border-color) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-text {
+            height: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skeleton-text:last-child {
+            width: 60%;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .search-container {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .logo {
+                font-size: 1.25rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                max-width: calc(100vw - 2rem);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Additional Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-sort-amount-down"></i>
+                <span>Advanced External Merge Sort</span>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Control Panel -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-cogs"></i>
+                    Control Panel
+                </h3>
+            </div>
+            
+            <div class="control-panel">
+                <div class="control-group">
+                    <label class="control-label">Data Generation</label>
+                    <button class="btn" onclick="generateData()">
+                        <i class="fas fa-database"></i>
+                        Generate Sample Data
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Sort Criteria</label>
+                    <select class="select" id="sortBy">
+                        <option value="emp_id">Employee ID</option>
+                        <option value="last_name">Last Name</option>
+                        <option value="salary">Salary</option>
+                        <option value="hire_date">Hire Date</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Algorithm</label>
+                    <select class="select" id="algorithm">
+                        <option value="merge">External Merge Sort</option>
+                        <option value="quick">Quick Sort</option>
+                        <option value="heap">Heap Sort</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Execute Sort</label>
+                    <button class="btn btn-success" onclick="performSort()">
+                        <i class="fas fa-play"></i>
+                        Start Sorting
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Compare Algorithms</label>
+                    <button class="btn btn-secondary" onclick="compareAlgorithms()">
+                        <i class="fas fa-chart-line"></i>
+                        Compare Performance
+                    </button>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Data Management</label>
+                    <button class="btn btn-danger" onclick="clearData()">
+                        <i class="fas fa-trash"></i>
+                        Clear All Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Processing...</div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="card" id="metricsCard" style="display: none;">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Performance Metrics
+                </h3>
+            </div>
+            <div class="metrics-grid" id="metricsGrid">
+                <!-- Metrics will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Tabs Section -->
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('employees')">
+                    <i class="fas fa-users"></i>
+                    Employee Data
+                </button>
+                <button class="tab" onclick="switchTab('analytics')">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </button>
+                <button class="tab" onclick="switchTab('operations')">
+                    <i class="fas fa-history"></i>
+                    Operations Log
+                </button>
+            </div>
+
+            <!-- Employee Data Tab -->
+            <div class="tab-content active" id="employeesTab">
+                <div class="search-container">
+                    <div class="search-input">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="input" placeholder="Search employees..." id="searchInput" onkeyup="searchEmployees()">
+                    </div>
+                    <select class="select" id="departmentFilter" onchange="filterEmployees()">
+                        <option value="">All Departments</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="HR">HR</option>
+                        <option value="Finance">Finance</option>
+                        <option value="IT">IT</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                    <button class="btn btn-outline" onclick="exportData()">
+                        <i class="fas fa-download"></i>
+                        Export CSV
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" onclick="sortTable('emp_id')">ID <i class="fas fa-sort"></i></th>
+                                <th class="sortable" onclick="sortTable('full_name')">Name <i class="fas fa-sort"></i></th>
+                                <th class="sortable" onclick="sortTable('department')">Department <i class="fas fa-sort"></i></th>
+                                <th class="sortable" onclick="sortTable('position')">Position <i class="fas fa-sort"></i></th>
+                                <th class="sortable" onclick="sortTable('salary')">Salary <i class="fas fa-sort"></i></th>
+                                <th class="sortable" onclick="sortTable('hire_date')">Hire Date <i class="fas fa-sort"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody">
+                            <!-- Employee data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be populated here -->
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analyticsTab">
+                <div id="analyticsContent">
+                    <div class="chart-container" id="chartContainer">
+                        <!-- Charts will be displayed here -->
+                    </div>
+                    <div class="analytics-stats" id="analyticsStats">
+                        <!-- Analytics statistics will be displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operations Log Tab -->
+            <div class="tab-content" id="operationsTab">
+                <div id="operationsLog">
+                    <!-- Operations log will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Algorithm Comparison -->
+    <div class="modal" id="comparisonModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Algorithm Performance Comparison</h3>
+                <button class="modal-close" onclick="closeModal('comparisonModal')">&times;</button>
+            </div>
+            <div id="comparisonContent">
+                <!-- Comparison results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const API_BASE = '';
+        let currentPage = 1;
+        let currentSortBy = 'emp_id';
+        let currentSortOrder = 1;
+        let employeeData = [];
+        let totalRecords = 0;
+
+        // Theme Management
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Initialize theme from localStorage
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type} fade-in`;
+            
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-${getToastIcon(type)}"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        function getToastIcon(type) {
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
+        // Progress Management
+        function showProgress() {
+            document.getElementById('progressContainer').style.display = 'block';
+            startProgressPolling();
+        }
+
+        function hideProgress() {
+            document.getElementById('progressContainer').style.display = 'none';
+        }
+
+        function updateProgress(current, total, status) {
+            const percentage = total > 0 ? (current / total) * 100 : 0;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${status} (${percentage.toFixed(1)}%)`;
+        }
+
+        function startProgressPolling() {
+            const pollProgress = async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/api/progress`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const progress = data.progress;
+                        updateProgress(progress.current, progress.total, progress.status);
+                        
+                        if (progress.status !== 'idle' && progress.percentage < 100) {
+                            setTimeout(pollProgress, 500);
+                        } else if (progress.percentage >= 100) {
+                            hideProgress();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Progress polling error:', error);
+                }
+            };
+            
+            pollProgress();
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab contents
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            
+            // Load tab-specific data
+            if (tabName === 'employees') {
+                loadEmployees();
+            } else if (tabName === 'analytics') {
+                loadAnalytics();
+            } else if (tabName === 'operations') {
+                loadOperations();
+            }
+        }
+
+        // Data Generation
+        async function generateData() {
+            showProgress();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/generate-data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        num_employees: 16000,
+                        num_files: 16
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(`✅ Generated ${data.file_count} files with employee data!`);
+                    loadEmployees();
+                } else {
+                    showToast(`❌ Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showToast(`❌ Network error: ${error.message}`, 'error');
+            } finally {
+                hideProgress();
+            }
+        }
+
+        // Sorting Operations
+        async function performSort() {
+            const sortBy = document.getElementById('sortBy').value;
+            const algorithm = document.getElementById('algorithm').value;
+            
+            showProgress();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/sort`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sort_by: sortBy, algorithm: algorithm })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(`✅ ${algorithm.toUpperCase()} sort completed successfully!`);
+                    displayResults(data);
+                    loadEmployees();
+                } else {
+                    showToast(`❌ Sort error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showToast(`❌ Network error: ${error.message}`, 'error');
+            } finally {
+                hideProgress();
+            }
+        }
+
+        // Algorithm Comparison
+        async function compareAlgorithms() {
+            const sortBy = document.getElementById('sortBy').value;
+            showProgress();
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/compare-algorithms`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sort_by: sortBy })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayComparison(data);
+                    document.getElementById('comparisonModal').style.display = 'block';
+                    showToast('✅ Algorithm comparison completed!');
+                } else {
+                    showToast(`❌ Comparison error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showToast(`❌ Network error: ${error.message}`, 'error');
+            } finally {
+                hideProgress();
+            }
+        }
+
+        // Display Results
+        function displayResults(data) {
+            document.getElementById('metricsCard').style.display = 'block';
+            displayMetrics(data.operations_log);
+            displayOperationsLog(data.operations_log);
+        }
+
+        function displayMetrics(operationsLog) {
+            const metricsGrid = document.getElementById('metricsGrid');
+            
+            const totalTime = operationsLog.reduce((sum, op) => sum + op.time_taken, 0);
+            const sortTime = operationsLog.find(op => op.operation.includes('sort_individual'))?.time_taken || 0;
+            const mergeTime = operationsLog.find(op => op.operation === 'merge_files')?.time_taken || 0;
+            const dataGenTime = operationsLog.find(op => op.operation.includes('generate'))?.time_taken || 0;
+            
+            metricsGrid.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-value">${totalTime.toFixed(3)}s</div>
+                    <div class="metric-label">Total Processing Time</div>
+                    <div class="metric-change">Complete workflow</div>
+                </div>
+                <div class="metric-card" style="background: linear-gradient(135deg, var(--success-color), #059669);">
+                    <div class="metric-value">${dataGenTime.toFixed(3)}s</div>
+                    <div class="metric-label">Data Generation</div>
+                    <div class="metric-change">16,000 records</div>
+                </div>
+                <div class="metric-card" style="background: linear-gradient(135deg, var(--secondary-color), #d97706);">
+                    <div class="metric-value">${sortTime.toFixed(3)}s</div>
+                    <div class="metric-label">Individual Sorting</div>
+                    <div class="metric-change">16 files processed</div>
+                </div>
+                <div class="metric-card" style="background: linear-gradient(135deg, var(--info-color), #2563eb);">
+                    <div class="metric-value">${mergeTime.toFixed(3)}s</div>
+                    <div class="metric-label">Merge Phase</div>
+                    <div class="metric-change">K-way merge</div>
+                </div>
+            `;
+        }
+
+        function displayComparison(data) {
+            const comparisonContent = document.getElementById('comparisonContent');
+            
+            let resultsHtml = '<div class="metrics-grid">';
+            for (const [algorithm, result] of Object.entries(data.comparison_results)) {
+                resultsHtml += `
+                    <div class="metric-card">
+                        <div class="metric-value">${result.time.toFixed(3)}s</div>
+                        <div class="metric-label">${result.algorithm}</div>
+                    </div>
+                `;
+            }
+            resultsHtml += '</div>';
+            
+            if (data.chart_data) {
+                resultsHtml += `
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,${data.chart_data}" alt="Performance Comparison Chart" style="max-width: 100%; height: auto;">
+                    </div>
+                `;
+            }
+            
+            comparisonContent.innerHTML = resultsHtml;
+        }
+
+        // Employee Data Management
+        async function loadEmployees(page = 1) {
+            try {
+                const response = await fetch(`${API_BASE}/api/employees?page=${page}&limit=50&sort_by=${currentSortBy}&sort_order=${currentSortOrder}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    employeeData = data.employees;
+                    totalRecords = data.total_count;
+                    currentPage = page;
+                    displayEmployeeTable(data.employees);
+                    updatePagination(data.page, data.total_pages);
+                }
+            } catch (error) {
+                showToast(`Error loading employees: ${error.message}`, 'error');
+            }
+        }
+
+        function displayEmployeeTable(employees) {
+            const tbody = document.getElementById('employeeTableBody');
+            
+            if (employees.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No employee data available</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = employees.map(emp => `
+                <tr>
+                    <td><strong>#${emp.emp_id}</strong></td>
+                    <td>
+                        <div>
+                            <strong>${emp.full_name || emp.first_name + ' ' + emp.last_name}</strong>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">${emp.email || ''}</div>
+                        </div>
+                    </td>
+                    <td><span class="badge">${emp.department}</span></td>
+                    <td>${emp.position || 'Employee'}</td>
+                    <td><strong>$${emp.salary?.toLocaleString() || '0'}</strong></td>
+                    <td>${emp.hire_date || 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updatePagination(currentPage, totalPages) {
+            const pagination = document.getElementById('pagination');
+            let paginationHtml = '';
+            
+            // Previous button
+            paginationHtml += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="loadEmployees(${currentPage - 1})">
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `<button class="${i === currentPage ? 'active' : ''}" onclick="loadEmployees(${i})">${i}</button>`;
+            }
+            
+            // Next button
+            paginationHtml += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="loadEmployees(${currentPage + 1})">
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            pagination.innerHTML = paginationHtml;
+        }
+
+        // Search and Filter
+        async function searchEmployees() {
+            const query = document.getElementById('searchInput').value;
+            const department = document.getElementById('departmentFilter').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/employees/search?q=${encodeURIComponent(query)}&department=${department}&page=1&limit=50`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayEmployeeTable(data.employees);
+                    updatePagination(data.page, data.total_pages);
+                }
+            } catch (error) {
+                showToast(`Search error: ${error.message}`, 'error');
+            }
+        }
+
+        function filterEmployees() {
+            searchEmployees();
+        }
+
+        // Sort Table
+        function sortTable(column) {
+            if (currentSortBy === column) {
+                currentSortOrder *= -1;
+            } else {
+                currentSortBy = column;
+                currentSortOrder = 1;
+            }
+            loadEmployees(1);
+        }
+
+        // Analytics
+        async function loadAnalytics() {
+            try {
+                const response = await fetch(`${API_BASE}/api/analytics`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayAnalytics(data.analytics);
+                }
+            } catch (error) {
+                showToast(`Analytics error: ${error.message}`, 'error');
+            }
+        }
+
+        function displayAnalytics(analytics) {
+            const analyticsContent = document.getElementById('analyticsContent');
+            
+            let html = '<div class="metrics-grid">';
+            
+            if (analytics.total_employees) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-value">${analytics.total_employees.toLocaleString()}</div>
+                        <div class="metric-label">Total Employees</div>
+                    </div>
+                `;
+            }
+            
+            if (analytics.salary_stats && analytics.salary_stats.avg_salary) {
+                html += `
+                    <div class="metric-card" style="background: linear-gradient(135deg, var(--success-color), #059669);">
+                        <div class="metric-value">$${Math.round(analytics.salary_stats.avg_salary).toLocaleString()}</div>
+                        <div class="metric-label">Average Salary</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            if (analytics.department_stats && analytics.department_stats.length > 0) {
+                html += '<h4 style="margin: 2rem 0 1rem 0;">Department Statistics</h4>';
+                html += '<div class="table-container"><table class="table"><thead><tr><th>Department</th><th>Employees</th><th>Avg Salary</th></tr></thead><tbody>';
+                
+                analytics.department_stats.forEach(dept => {
+                    html += `
+                        <tr>
+                            <td><strong>${dept._id}</strong></td>
+                            <td>${dept.count}</td>
+                            <td>$${Math.round(dept.avg_salary).toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table></div>';
+            }
+            
+            analyticsContent.innerHTML = html;
+        }
+
+        // Operations Log
+        async function loadOperations() {
+            try {
+                const response = await fetch(`${API_BASE}/api/operations?limit=50`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayOperationsLog(data.operations);
+                }
+            } catch (error) {
+                showToast(`Operations error: ${error.message}`, 'error');
+            }
+        }
+
+        function displayOperationsLog(operations) {
+            const operationsLog = document.getElementById('operationsLog');
+            
+            if (operations.length === 0) {
+                operationsLog.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No operations recorded yet.</p>';
+                return;
+            }
+            
+            operationsLog.innerHTML = `
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Operation</th>
+                                <th>Duration</th>
+                                <th>Details</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${operations.map(op => `
+                                <tr>
+                                    <td><strong>${formatOperationName(op.operation)}</strong></td>
+                                    <td><span class="badge">${op.time_taken?.toFixed(4) || '0.0000'}s</span></td>
+                                    <td><small>${JSON.stringify(op.details || {})}</small></td>
+                                    <td><small>${new Date(op.timestamp).toLocaleString()}</small></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function formatOperationName(operation) {
+            return operation.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        // Export Data
+        async function exportData() {
+            try {
+                const response = await fetch(`${API_BASE}/api/export`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ format: 'csv', limit: 1000 })
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'employees_sorted.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showToast('✅ Data exported successfully!');
+                } else {
+                    showToast('❌ Export failed', 'error');
+                }
+            } catch (error) {
+                showToast(`Export error: ${error.message}`, 'error');
+            }
+        }
+
+        // Clear Data
+        async function clearData() {
+            if (!confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/clear-data`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('✅ All data cleared successfully!');
+                    document.getElementById('metricsCard').style.display = 'none';
+                    document.getElementById('employeeTableBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">No data available</td></tr>';
+                    document.getElementById('pagination').innerHTML = '';
+                } else {
+                    showToast(`❌ Clear error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showToast(`❌ Network error: ${error.message}`, 'error');
+            }
+        }
+
+        // Modal Management
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            loadEmployees();
+            showToast('🚀 Advanced External Merge Sort dashboard loaded successfully!', 'info');
+            
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            };
+        });
+
+        // Add CSS for badges
+        const style = document.createElement('style');
+        style.textContent = `
+            .badge {
+                background: var(--primary-color);
+                color: white;
+                padding: 0.25rem 0.5rem;
+                border-radius: var(--radius-sm);
+                font-size: 0.75rem;
+                font-weight: 500;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
